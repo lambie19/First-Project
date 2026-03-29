@@ -32,4 +32,11 @@ match ($action) {
     
     //  BÌNH LUẬN 
     'list-comment'    => (new CommentController)->index(),
-};
+
+    // ĐƠN HÀNG
+    
+    'list-order'          => (new OrderController)->index(),
+    'show-order'          => (new OrderController)->show(),
+    'update-order-status' => (new OrderController)->updateStatus(),
+    'delete-order'        => (new OrderController)->delete(),
+    };
