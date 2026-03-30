@@ -35,8 +35,9 @@ match ($action) {
 
     // ĐƠN HÀNG
     
-    'list-order'          => (new OrderController)->index(),
-    'show-order'          => (new OrderController)->show(),
-    'update-order-status' => (new OrderController)->updateStatus(),
-    'delete-order'        => (new OrderController)->delete(),
+    'list-order'          => (new AdminOrderController)->index(),
+    'show-order'          => (new AdminOrderController)->show(),
+    'update-order-status' => (new AdminOrderController)->updateStatus(),
+    'delete-order'        => (new AdminOrderController)->delete(),
+    
     };

@@ -9,6 +9,9 @@
         'cancelled' => ['label' => 'Đã hủy',       'class' => 'bg-danger'],
     ];
     $st = $statusMap[$order['status']] ?? ['label' => $order['status'], 'class' => 'bg-secondary'];
+
+    // Trạng thái bị khóa: completed hoặc cancelled không thể chỉnh nữa
+    $isLocked = in_array($order['status'], ['completed', 'cancelled']);
     ?>
 
     <div class="mb-3">
@@ -63,22 +66,52 @@
         <div class="col-md-7">
 
             <div class="card shadow-sm mb-3">
-                <div class="card-header fw-bold bg-warning text-dark">🔄 Cập nhật trạng thái</div>
+                <div class="card-header fw-bold <?= $isLocked ? 'bg-secondary text-white' : 'bg-warning text-dark' ?>">
+                    <?= $isLocked ? '🔒 Trạng thái đã khóa' : '🔄 Cập nhật trạng thái' ?>
+                </div>
                 <div class="card-body">
-                    <form action="<?= BASE_URL_ADMIN ?>&action=update-order-status&id=<?= $order['id'] ?>"
-                          method="POST" class="d-flex gap-3 align-items-end flex-wrap">
-                        <div class="flex-grow-1">
-                            <label class="form-label fw-semibold mb-1">Trạng thái mới</label>
-                            <select name="status" class="form-select">
-                                <?php foreach ($statusMap as $key => $val) : ?>
-                                <option value="<?= $key ?>" <?= $order['status'] === $key ? 'selected' : '' ?>>
-                                    <?= $val['label'] ?>
-                                </option>
-                                <?php endforeach; ?>
-                            </select>
+
+                    <?php if ($isLocked) : ?>
+                        <!-- Hiển thị thông báo khóa -->
+                        <?php if ($order['status'] === 'completed') : ?>
+                        <div class="alert alert-success mb-0 d-flex align-items-center gap-2">
+                            <span style="font-size:1.5rem">✅</span>
+                            <div>
+                                <strong>Đơn hàng đã hoàn thành.</strong><br>
+                                <span class="text-muted small">Không thể thay đổi trạng thái nữa.</span>
+                            </div>
                         </div>
-                        <button type="submit" class="btn btn-warning fw-bold px-4">Lưu</button>
-                    </form>
+                        <?php else : ?>
+                        <div class="alert alert-danger mb-0 d-flex align-items-center gap-2">
+                            <span style="font-size:1.5rem">❌</span>
+                            <div>
+                                <strong>Đơn hàng đã bị hủy.</strong><br>
+                                <span class="text-muted small">Không thể thay đổi trạng thái nữa.</span>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                    <?php else : ?>
+                        <!-- Form cập nhật trạng thái -->
+                        <form id="statusForm"
+                              action="<?= BASE_URL_ADMIN ?>&action=update-order-status&id=<?= $order['id'] ?>"
+                              method="POST"
+                              class="d-flex gap-3 align-items-end flex-wrap">
+                            <div class="flex-grow-1">
+                                <label class="form-label fw-semibold mb-1">Trạng thái mới</label>
+                                <select name="status" id="statusSelect" class="form-select">
+                                    <?php foreach ($statusMap as $key => $val) : ?>
+                                    <option value="<?= $key ?>"
+                                        <?= $order['status'] === $key ? 'selected' : '' ?>>
+                                        <?= $val['label'] ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                            <button type="button" class="btn btn-warning fw-bold px-4"
+                                    onclick="confirmUpdate()">Lưu</button>
+                        </form>
+                    <?php endif; ?>
 
                     <!-- Timeline trạng thái -->
                     <div class="mt-4">
@@ -86,11 +119,11 @@
                             <div style="position:absolute; top:12px; left:0; right:0; height:3px; background:#dee2e6; z-index:0;"></div>
                             <?php
                             $steps = ['pending' => 'Chờ xác nhận', 'confirmed' => 'Đã xác nhận', 'shipping' => 'Đang giao', 'completed' => 'Hoàn thành'];
-                            $stepKeys = array_keys($steps);
+                            $stepKeys   = array_keys($steps);
                             $currentIdx = array_search($order['status'], $stepKeys);
                             foreach ($steps as $key => $label) :
-                                $idx = array_search($key, $stepKeys);
-                                $done = ($currentIdx !== false && $idx <= $currentIdx && $order['status'] !== 'cancelled');
+                                $idx   = array_search($key, $stepKeys);
+                                $done  = ($currentIdx !== false && $idx <= $currentIdx && $order['status'] !== 'cancelled');
                                 $color = $done ? '#198754' : '#dee2e6';
                             ?>
                             <div class="text-center position-relative" style="z-index:1; flex:1;">
@@ -168,3 +201,60 @@
     </div>
 
 </div>
+
+<!-- Modal xác nhận đổi trạng thái -->
+<div class="modal fade" id="confirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-warning text-dark">
+                <h5 class="modal-title fw-bold">⚠️ Xác nhận thay đổi trạng thái</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                Bạn có chắc chắn muốn thay đổi trạng thái đơn hàng không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy bỏ</button>
+                <button type="button" class="btn btn-warning fw-bold" id="confirmBtn"
+                        onclick="document.getElementById('statusForm').submit()">
+                    Xác nhận
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+const statusLabels = {
+    pending:   'Chờ xác nhận',
+    confirmed: 'Đã xác nhận',
+    shipping:  'Đang giao',
+    completed: 'Hoàn thành',
+    cancelled: 'Đã hủy',
+};
+
+// Các trạng thái không thể hoàn tác → cần cảnh báo mạnh hơn
+const finalStatuses = ['completed', 'cancelled'];
+
+function confirmUpdate() {
+    const select    = document.getElementById('statusSelect');
+    const newStatus = select.value;
+    const newLabel  = statusLabels[newStatus] ?? newStatus;
+
+    let message = `Bạn có chắc chắn muốn chuyển sang trạng thái <strong>"${newLabel}"</strong> không?`;
+
+    if (finalStatuses.includes(newStatus)) {
+        message += `<br><br><span class="text-danger fw-bold">⚠️ Lưu ý: Sau khi chuyển sang trạng thái này, đơn hàng sẽ bị <u>khóa</u> và không thể thay đổi nữa!</span>`;
+
+        // Đổi màu nút xác nhận thành đỏ để nhấn mạnh
+        document.getElementById('confirmBtn').className = 'btn btn-danger fw-bold';
+    } else {
+        document.getElementById('confirmBtn').className = 'btn btn-warning fw-bold';
+    }
+
+    document.getElementById('modalBody').innerHTML = message;
+
+    const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+    modal.show();
+}
+</script>

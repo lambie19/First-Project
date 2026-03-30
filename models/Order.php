@@ -46,12 +46,13 @@ class Order extends BaseModel {
     public function insert($data) {
         $sql = "
             INSERT INTO orders
-                (customer_name, customer_phone, customer_address, note, total_price, status, created_at)
+                (user_id, customer_name, customer_phone, customer_address, note, total_price, status, created_at)
             VALUES
-                (:customer_name, :customer_phone, :customer_address, :note, :total_price, 'pending', NOW())
+                (:user_id, :customer_name, :customer_phone, :customer_address, :note, :total_price, 'pending', NOW())
         ";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
+            'user_id'          => $data['user_id'] ?? null,
             'customer_name'    => $data['customer_name'],
             'customer_phone'   => $data['customer_phone'],
             'customer_address' => $data['customer_address'],

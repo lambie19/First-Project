@@ -1,6 +1,6 @@
 <div class="col-12">
     <div class="mb-3">
-        <a href="<?= BASE_URL ?>?action=show-product&id=<?= $product['id'] ?>"
+        <a href="<?= BASE_URL ?>?action=detail-product&id=<?= $product['id'] ?>"
            class="btn btn-outline-secondary btn-sm">← Quay lại sản phẩm</a>
     </div>
 
@@ -10,7 +10,7 @@
 
     <div class="row g-4">
 
-        <!-- Card sản phẩm -->
+        <!-- Thông tin sản phẩm -->
         <div class="col-md-4">
             <div class="card shadow-sm border-0 sticky-top" style="top:20px">
                 <div class="card-header bg-light fw-bold">📦 Sản phẩm đặt mua</div>
@@ -37,27 +37,35 @@
                         <input type="hidden" name="product_id" value="<?= $product['id'] ?>">
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Họ và tên <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">
+                                Họ và tên <span class="text-danger">*</span>
+                            </label>
                             <input type="text" name="customer_name" class="form-control" required
                                    placeholder="Nhập họ tên người nhận"
-                                   value="<?= htmlspecialchars($_POST['customer_name'] ?? '') ?>">
+                                   value="<?= htmlspecialchars($_POST['customer_name'] ?? $_SESSION['user_name'] ?? '') ?>">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Số điện thoại <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">
+                                Số điện thoại <span class="text-danger">*</span>
+                            </label>
                             <input type="tel" name="customer_phone" class="form-control" required
                                    placeholder="0xxxxxxxxx" pattern="[0-9]{9,11}"
                                    value="<?= htmlspecialchars($_POST['customer_phone'] ?? '') ?>">
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Địa chỉ giao hàng <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">
+                                Địa chỉ giao hàng <span class="text-danger">*</span>
+                            </label>
                             <textarea name="customer_address" class="form-control" rows="2" required
                                       placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành"><?= htmlspecialchars($_POST['customer_address'] ?? '') ?></textarea>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold">Số lượng <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold">
+                                Số lượng <span class="text-danger">*</span>
+                            </label>
                             <input type="number" name="quantity" id="qty" class="form-control"
                                    min="1" max="<?= $product['quantity'] ?>" required
                                    value="<?= intval($_POST['quantity'] ?? 1) ?>"

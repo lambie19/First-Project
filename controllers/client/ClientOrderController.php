@@ -1,6 +1,6 @@
 <?php
 
-class OrderController
+class ClientOrderController
 {
     private $modelOrder;
     private $modelProduct;
@@ -11,26 +11,40 @@ class OrderController
     }
 
     // Hiển thị form đặt hàng
+    // Truy cập: ?action=order-create&id=<product_id>
     public function create() {
+        // Bắt buộc phải đăng nhập mới được đặt hàng
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '?action=login');
+            exit;
+        }
+
         $id = $_GET['id'] ?? null;
         if (!$id) {
-            header('Location: ' . BASE_URL . '?action=list-product');
+            header('Location: ' . BASE_URL);
             exit;
         }
+
         $product = $this->modelProduct->find($id);
         if (!$product) {
-            header('Location: ' . BASE_URL . '?action=list-product');
+            header('Location: ' . BASE_URL);
             exit;
         }
+
         $view  = 'order/create';
         $title = 'Đặt hàng: ' . $product['name'];
         require_once PATH_VIEW_MAIN_CLIENT;
     }
 
-    // Xử lý lưu đơn hàng
+    // Xử lý lưu đơn hàng (POST)
     public function store() {
+        if (!isset($_SESSION['user_id'])) {
+            header('Location: ' . BASE_URL . '?action=login');
+            exit;
+        }
+
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: ' . BASE_URL . '?action=list-product');
+            header('Location: ' . BASE_URL);
             exit;
         }
 
@@ -38,19 +52,19 @@ class OrderController
         $quantity   = intval($_POST['quantity'] ?? 1);
 
         if (!$product_id || $quantity < 1) {
-            header('Location: ' . BASE_URL . '?action=list-product');
+            header('Location: ' . BASE_URL);
             exit;
         }
 
         $product = $this->modelProduct->find($product_id);
         if (!$product) {
-            header('Location: ' . BASE_URL . '?action=list-product');
+            header('Location: ' . BASE_URL);
             exit;
         }
 
-        // Kiểm tra tồn kho
+        // Kiểm tra số lượng tồn kho
         if ($quantity > $product['quantity']) {
-            $error = 'Số lượng đặt vượt quá tồn kho (' . $product['quantity'] . ' sản phẩm).';
+            $error = 'Số lượng đặt (' . $quantity . ') vượt quá tồn kho (' . $product['quantity'] . ' sản phẩm).';
             $view  = 'order/create';
             $title = 'Đặt hàng: ' . $product['name'];
             require_once PATH_VIEW_MAIN_CLIENT;
@@ -59,8 +73,9 @@ class OrderController
 
         $total_price = $product['price'] * $quantity;
 
-        // Lưu đơn hàng
+        // Lưu đơn hàng vào DB
         $order_id = $this->modelOrder->insert([
+            'user_id'          => $_SESSION['user_id'],
             'customer_name'    => trim($_POST['customer_name']),
             'customer_phone'   => trim($_POST['customer_phone']),
             'customer_address' => trim($_POST['customer_address']),
@@ -68,7 +83,7 @@ class OrderController
             'total_price'      => $total_price,
         ]);
 
-        // Lưu chi tiết đơn hàng
+        // Lưu chi tiết sản phẩm trong đơn
         $this->modelOrder->insertItem([
             'order_id'   => $order_id,
             'product_id' => $product_id,
@@ -76,19 +91,22 @@ class OrderController
             'price'      => $product['price'],
         ]);
 
+        // Chuyển sang trang thành công
         header('Location: ' . BASE_URL . '?action=order-success&id=' . $order_id);
         exit;
     }
 
-    // Trang đặt hàng thành công
+    // Trang xác nhận đặt hàng thành công
     public function success() {
         $id = $_GET['id'] ?? null;
         if (!$id) {
             header('Location: ' . BASE_URL);
             exit;
         }
+
         $order      = $this->modelOrder->find($id);
         $orderItems = $this->modelOrder->getOrderItems($id);
+
         $view  = 'order/success';
         $title = 'Đặt hàng thành công!';
         require_once PATH_VIEW_MAIN_CLIENT;

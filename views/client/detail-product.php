@@ -21,7 +21,7 @@
         </p>
 
         <button class="btn btn-lg btn-success">Thêm vào giỏ hàng</button>
-        <button class="btn btn-lg btn-primary">Mua ngay</button>
+        <a href="<?= BASE_URL ?>?action=order-create&id=<?= $pro['id'] ?>"class="btn btn-danger btn-lg px-5">🛒 Mua ngay</a>
     </div>
 </div>
 

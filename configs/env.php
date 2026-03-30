@@ -29,5 +29,4 @@ define('DB_OPTIONS', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
-// tiến dũng ok
-//tiến dũng vjp
+// tien dung ngu vcl

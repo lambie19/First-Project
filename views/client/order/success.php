@@ -92,7 +92,7 @@
             </div>
 
             <div class="text-center">
-                <a href="<?= BASE_URL ?>?action=list-product" class="btn btn-danger btn-lg px-5">
+                <a href="<?= BASE_URL ?>" class="btn btn-danger btn-lg px-5">
                     Tiếp tục mua sắm
                 </a>
             </div>

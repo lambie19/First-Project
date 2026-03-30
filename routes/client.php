@@ -18,4 +18,10 @@ match ($action) {
     'register'          => (new AuthController)->registerForm(),    
     'handle-register'   => (new AuthController)->registerProcess(), 
     'logout'            => (new AuthController)->logout(),
+
+    // Đặt hàng
+    'order-create'      => (new ClientOrderController)->create(),
+    'order-store'       => (new ClientOrderController)->store(),
+    'order-success'     => (new ClientOrderController)->success(),
+    
 };

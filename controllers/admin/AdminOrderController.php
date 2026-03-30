@@ -1,6 +1,6 @@
 <?php
 
-class OrderController
+class AdminOrderController
 {
     private $modelOrder;
 
