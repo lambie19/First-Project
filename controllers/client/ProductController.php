@@ -4,12 +4,14 @@ class ProductController
 {
     private $modelProduct;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->modelProduct = new Product();
     }
 
     // Danh sách sản phẩm
-    public function index() {
+    public function index()
+    {
         $view  = 'product/index';
         $title = 'Danh sách sản phẩm';
         $data  = $this->modelProduct->getAll();
@@ -17,7 +19,8 @@ class ProductController
     }
 
     // Chi tiết sản phẩm
-    public function show() {
+    public function show()
+    {
         $id = $_GET['id'] ?? null;
         if (!$id) {
             header('Location: ' . BASE_URL . '?action=list-product');
