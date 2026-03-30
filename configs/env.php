@@ -1,7 +1,7 @@
 <?php
 
-define('BASE_URL',          'http://03_t4_web2041.03_web2041-main.test/');
-define('BASE_URL_ADMIN',          'http://03_t4_web2041.03_web2041-main.test/?mode=admin');
+define('BASE_URL',          'http://localhost/First-Project/');
+define('BASE_URL_ADMIN',          'http://localhost/First-Project/?mode=admin');
 
 define('PATH_ROOT',         __DIR__ . '/../');
 
@@ -29,4 +29,3 @@ define('DB_OPTIONS', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);
-// qua la chan di
