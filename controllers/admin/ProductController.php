@@ -29,24 +29,35 @@ class ProductController
         require_once PATH_VIEW_MAIN_ADMIN;
     }
 
-    public function store() {
+     public function store()
+    {
         try {
             
             $data = $_POST + $_FILES;
             // echo "<pre>";
             // var_dump($data);
         
+
+            // ✅ DÁN Ở ĐÂY (validate ảnh trước)
+            if ($data["image"]["size"] <= 0) {
+                throw new Exception("Vui lòng chọn ảnh sản phẩm");
+            }
+
+            // Xử lý upload ảnh
             if ($data["image"]["size"] > 0) {
                 $data["image"] = upload_file('products', $data["image"]);
             } else {
                 $data["image"] = null;
             }
 
+            // weights
             if (isset($_POST['weights']) && is_array($_POST['weights'])) {
             // Loại bỏ các ô trống và nối lại bằng dấu phẩy
             $data['weights'] = implode(',', array_filter($_POST['weights']));
+                $data['weights'] = implode(',', array_filter($_POST['weights']));
             } else {
                 $data['weights'] = null; 
+                $data['weights'] = null;
             }
 
         
@@ -54,8 +65,12 @@ class ProductController
 
         } catch(Exception $ex) {
             throw new Exception("Thao tác tạo mới lỗi");
+        } catch (Exception $ex) {
+            die($ex->getMessage());
         }
         header('Location:' .BASE_URL_ADMIN .'&action=create-product');
+
+        header('Location:' . BASE_URL_ADMIN . '&action=create-product');
         exit();
     }
     public function delete() {
@@ -139,11 +154,26 @@ public function update() {
 
         
         $this->modelProduct->update($id, $data);
+            $file = $_FILES['image'];
 
         
         header('Location: ?mode=admin&action=list-product');
         exit;
+            if (!is_numeric($data['price']) || $data['price'] < 0 || floor($data['price']) != $data['price']) {
+                die("Giá phải là số nguyên không âm");
+            }
+
+            if (!is_numeric($data['quantity']) || $data['quantity'] < 0 || floor($data['quantity']) != $data['quantity']) {
+                die("Số lượng phải là số nguyên không âm");
+            }
+
+
+            $this->modelProduct->update($id, $data);
+
+
+            header('Location: ?mode=admin&action=list-product');
+            exit;
+        }
     }
 }
     
-}
