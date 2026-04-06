@@ -11,7 +11,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    
+
 </head>
 
 <body>
@@ -21,7 +21,7 @@
             <li class="nav-item">
                 <a class="nav-link text-uppercase" href="<?= BASE_URL ?>"><b>Home</b></a>
             </li>
-            
+
             <?php if (isset($_SESSION['user_id'])) : ?>
                 <li class="nav-item">
                     <span class="nav-link text-success">Xin chào, <b><?= $_SESSION['user_name'] ?></b></span>
@@ -29,7 +29,7 @@
                 <li class="nav-item">
                     <a class="nav-link text-uppercase text-danger" href="<?= BASE_URL ?>?action=logout"><b>Đăng xuất</b></a>
                 </li>
-                
+
             <?php else : ?>
                 <li class="nav-item">
                     <a class="nav-link text-uppercase" href="<?= BASE_URL ?>?action=login"><b>Đăng nhập</b></a>
