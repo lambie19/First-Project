@@ -14,14 +14,25 @@
         </div>
 
         <h3 class="text-danger fw-bold mb-3">Giá: <?= number_format($pro['price'], 0, ',', '.') ?> VNĐ</h3>
-        
+
         <p class="mb-4">
-            <strong>Mô tả:</strong> 
+            <strong>Mô tả:</strong>
             <?= nl2br($pro['description']) ?>
         </p>
 
-        <button class="btn btn-lg btn-success">Thêm vào giỏ hàng</button>
-        <a href="<?= BASE_URL ?>?action=order-create&id=<?= $pro['id'] ?>"class="btn btn-danger btn-lg px-5">🛒 Mua ngay</a>
+        <!-- Nút thêm vào giỏ hàng -->
+        <form method="POST" action="<?= BASE_URL ?>?action=cart-add" class="d-inline-flex align-items-center gap-2 me-2">
+            <input type="hidden" name="product_id" value="<?= $pro['id'] ?>">
+            <input type="number" name="quantity" value="1" min="1" max="999"
+                class="form-control" style="width: 75px;">
+            <button type="submit" class="btn btn-lg btn-success">
+                🛒 Thêm vào giỏ hàng
+            </button>
+        </form>
+
+        <a href="<?= BASE_URL ?>?action=order-create&id=<?= $pro['id'] ?>" class="btn btn-danger btn-lg px-5">
+            ⚡ Mua ngay
+        </a>
     </div>
 </div>
 
@@ -30,18 +41,19 @@
 <div class="row">
     <div class="col-12">
         <h2>Bình luận và Đánh giá</h2>
-        
+
         <h4 class="mt-4">Gửi Bình luận của bạn</h4>
-        
-        <?php if (isset($_SESSION['user_id'])) : //Yêu cầu đăng nhập để bình luận ?>
+
+        <?php if (isset($_SESSION['user_id'])) : //Yêu cầu đăng nhập để bình luận 
+        ?>
             <form action="<?= BASE_URL ?>?action=store-comment" method="POST" class="mb-5">
                 <input type="hidden" name="product_id" value="<?= $pro['id'] ?>">
-                
+
                 <div class="mb-3">
                     <label for="comment_content" class="form-label">Nội dung bình luận:</label>
                     <textarea class="form-control" name="content" id="comment_content" rows="3" required></textarea>
                 </div>
-                
+
                 <button type="submit" class="btn btn-primary">Gửi Bình luận</button>
             </form>
         <?php else : ?>
@@ -49,9 +61,9 @@
                 Vui lòng <a href="<?= BASE_URL ?>?action=login">đăng nhập</a> để bình luận.
             </div>
         <?php endif; ?>
-        
+
         <h4 class="mt-5">Các Bình luận (<?= count($comments) ?>)</h4>
-        
+
         <?php if (!empty($comments)) : ?>
             <ul class="list-group">
                 <?php foreach ($comments as $comment) : ?>
