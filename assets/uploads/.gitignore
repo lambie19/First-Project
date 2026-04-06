@@ -1,2 +1,3 @@
 *
 !.gitignore
+configs/env.php

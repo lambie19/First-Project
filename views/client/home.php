@@ -25,7 +25,7 @@
         <div class="row align-items-center">
             <div class="col-md-2">
                 <a href="index.php">
-                    <img src="../assets/uploads/logo.png" alt="Logo" style="height: 150px;"> </a>
+                    <img src="../assets/uploads/logo3.png" alt="Logo" style="height: 150px;"> </a>
             </div>
             <div class="col-md-5">
                 <form action="index.php" method="GET">
@@ -83,13 +83,13 @@
     </div>
     <div class="carousel-inner">
         <div class="carousel-item active">
-            <img src="../assets/uploads/banner2.jpg" class="d-block w-100" alt="...">
+            <img src="../assets/uploads/banner5.png" class="d-block w-100" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="../assets/uploads/banner3.jpg" class="d-block w-100" alt="...">
+            <img src="../assets/uploads/banner6.png" class="d-block w-100" alt="...">
         </div>
         <div class="carousel-item">
-            <img src="../assets/uploads/banner4.jpg" class="d-block w-100" alt="...">
+            <img src="../assets/uploads/banner7.png" class="d-block w-100" alt="...">
         </div>
     </div>
     <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
