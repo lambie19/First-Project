@@ -4,16 +4,16 @@ class CartController
 {
     // GET ?action=cart
     // Hiển thị trang giỏ hàng
-    public function index()
-    {
-        $cart  = $_SESSION['cart'] ?? [];
-        $total = $this->calcTotal($cart);
+   public function index()
+{
+    $cart  = $_SESSION['cart'] ?? [];
+    $total = $this->calcTotal($cart);
 
-        require_once PATH_VIEW_CLIENT . 'cart/index.php';
-    }
+    $title = 'Giỏ hàng'; 
+    $view  = 'cart/index'; 
+    require_once PATH_VIEW_CLIENT . 'main.php'; 
+}
 
-    // GET ?action=cart-add (gọi từ form sản phẩm)
-    // Thêm sản phẩm vào giỏ hàng
     public function add()
     {
         $productId = (int)($_POST['product_id'] ?? 0);
@@ -92,8 +92,7 @@ class CartController
         exit;
     }
 
-    // GET ?action=cart-clear
-    // Xoá toàn bộ giỏ hàng
+   
     public function clear()
     {
         $_SESSION['cart']   = [];

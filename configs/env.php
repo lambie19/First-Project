@@ -5,6 +5,7 @@ define('BASE_URL_ADMIN',          'http://03_t4_web2041.03_web2041-main.test/?mo
 
 define('PATH_ROOT',         __DIR__ . '/../');
 
+
 define('PATH_VIEW_ADMIN',         PATH_ROOT . 'views/admin/');
 define('PATH_VIEW_CLIENT',         PATH_ROOT . 'views/client/');
 

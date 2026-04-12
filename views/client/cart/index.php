@@ -1,187 +1,149 @@
-<?php
-// views/client/cart/index.php
-// Được load bởi main.php qua $view = 'cart/index'
-$title = 'Giỏ hàng';
-?>
+<?php $title = 'Giỏ hàng'; ?>
 
-<?php if (isset($_SESSION['success'])) : ?>
-    <div class="col-12">
-        <div class="alert alert-success alert-dismissible fade show">
-            <?= htmlspecialchars($_SESSION['success']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+<div class="container py-4">
+    <h4 style="font-weight:800;margin-bottom:4px;"><i class="fas fa-shopping-basket me-2 text-success"></i>Giỏ hàng của bạn</h4>
+    <p class="text-muted mb-4" style="font-size:13.5px;">Kiểm tra và chỉnh sửa trước khi thanh toán</p>
+
+    <?php if(isset($_SESSION['success'])): ?>
+        <div class="alert alert-success"><i class="fas fa-check-circle me-2"></i><?= htmlspecialchars($_SESSION['success']) ?></div>
         <?php unset($_SESSION['success']); ?>
-    </div>
-<?php endif; ?>
+    <?php endif; ?>
 
-<?php if (isset($_SESSION['error'])) : ?>
-    <div class="col-12">
-        <div class="alert alert-danger alert-dismissible fade show">
-            <?= htmlspecialchars($_SESSION['error']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
+    <?php if(isset($_SESSION['error'])): ?>
+        <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['error']) ?></div>
         <?php unset($_SESSION['error']); ?>
-    </div>
-<?php endif; ?>
+    <?php endif; ?>
 
-<?php if (empty($cart)) : ?>
-
-    <!-- Giỏ hàng trống -->
-    <div class="col-12 text-center py-5">
-        <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png"
-            alt="empty cart" width="120" class="mb-4 opacity-50">
-        <h4 class="text-muted">Giỏ hàng của bạn đang trống</h4>
-        <p class="text-muted">Hãy thêm sản phẩm vào giỏ để tiếp tục mua sắm.</p>
-        <a href="<?= BASE_URL ?>" class="btn btn-primary mt-2">
-            ← Tiếp tục mua sắm
+    <?php if(empty($cart)): ?>
+    <div class="text-center py-5" style="background:#f9fafb;border-radius:16px;border:1px solid #e5e7eb;">
+        <img src="https://cdn-icons-png.flaticon.com/512/2038/2038854.png" alt="" width="90" style="opacity:.3;margin-bottom:16px;">
+        <h5 style="font-weight:700;color:#374151;">Giỏ hàng đang trống</h5>
+        <p class="text-muted" style="font-size:13.5px;">Hãy thêm sản phẩm vào giỏ để tiếp tục mua sắm.</p>
+        <a href="<?= BASE_URL ?>" class="btn btn-success px-4 rounded-pill mt-1">
+            <i class="fas fa-arrow-left me-2"></i>Tiếp tục mua sắm
         </a>
     </div>
 
-<?php else : ?>
+    <?php else: ?>
+    <div class="row g-4">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;overflow:hidden;">
+                <div style="padding:14px 20px;border-bottom:1px solid #f1f5f9;font-size:13px;font-weight:600;color:#6b7280;display:flex;gap:0;">
+                    <span style="flex:1;">Sản phẩm</span>
+                    <span style="width:140px;text-align:center;">Số lượng</span>
+                    <span style="width:110px;text-align:right;">Thành tiền</span>
+                    <span style="width:44px;"></span>
+                </div>
 
-    <!-- Bảng sản phẩm trong giỏ -->
-    <div class="col-lg-8">
-        <table class="table table-bordered table-hover align-middle">
-            <thead class="table-dark">
-                <tr>
-                    <th style="width:70px">Ảnh</th>
-                    <th>Sản phẩm</th>
-                    <th class="text-center" style="width:160px">Số lượng</th>
-                    <th class="text-end" style="width:120px">Đơn giá</th>
-                    <th class="text-end" style="width:130px">Thành tiền</th>
-                    <th class="text-center" style="width:60px">Xoá</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach ($cart as $id => $item) : ?>
-                    <tr>
-                        <!-- Ảnh sản phẩm -->
-                        <td class="text-center">
-                            <?php if (!empty($item['image'])) : ?>
-                                <img src="<?= BASE_ASSETS_UPLOADS . 'products/' . htmlspecialchars($item['image']) ?>"
-                                    alt="<?= htmlspecialchars($item['name']) ?>"
-                                    width="55" height="55"
-                                    style="object-fit:cover; border-radius:6px;">
-                            <?php else : ?>
-                                <div class="bg-secondary d-flex align-items-center justify-content-center rounded"
-                                    style="width:55px;height:55px;">
-                                    <span class="text-white" style="font-size:22px;">📦</span>
-                                </div>
-                            <?php endif; ?>
-                        </td>
+                <?php foreach($cart as $id => $item): ?>
+                <div style="display:flex;align-items:center;padding:14px 20px;border-bottom:1px solid #f9fafb;gap:14px;">
+                    <!-- Image -->
+                    <?php if(!empty($item['image'])): ?>
+                        <img src="<?= BASE_ASSETS_UPLOADS . 'products/' . htmlspecialchars($item['image']) ?>" alt=""
+                             style="width:60px;height:60px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;flex-shrink:0;">
+                    <?php else: ?>
+                        <div style="width:60px;height:60px;background:#f3f4f6;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">📦</div>
+                    <?php endif; ?>
 
-                        <!-- Tên sản phẩm -->
-                        <td>
-                            <span class="fw-semibold"><?= htmlspecialchars($item['name']) ?></span>
-                        </td>
+                    <!-- Name -->
+                    <div style="flex:1;">
+                        <div style="font-weight:600;font-size:14px;color:#111827;"><?= htmlspecialchars($item['name']) ?></div>
+                        <div style="font-size:12.5px;color:#9ca3af;margin-top:2px;"><?= number_format($item['price']) ?>đ / sản phẩm</div>
+                    </div>
 
-                        <!-- Cập nhật số lượng -->
-                        <td>
-                            <form method="POST"
-                                action="<?= BASE_URL ?>?action=cart-update"
-                                class="d-flex align-items-center justify-content-center gap-1">
-                                <input type="hidden" name="product_id" value="<?= $id ?>">
+                    <!-- Qty -->
+                    <div style="width:140px;">
+                        <form method="POST" action="<?= BASE_URL ?>?action=cart-update"
+                              style="display:flex;align-items:center;justify-content:center;gap:6px;">
+                            <input type="hidden" name="product_id" value="<?= $id ?>">
+                            <button type="button" onclick="changeQty(this,-1)"
+                                    style="width:30px;height:30px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151;flex-shrink:0;">−</button>
+                            <input type="number" name="quantity" value="<?= (int)$item['quantity'] ?>" min="1" max="999"
+                                   style="width:46px;height:30px;border:1.5px solid #e5e7eb;border-radius:8px;text-align:center;font-size:13.5px;font-weight:600;outline:none;"
+                                   onchange="this.form.submit()">
+                            <button type="button" onclick="changeQty(this,1)"
+                                    style="width:30px;height:30px;border-radius:8px;border:1.5px solid #e5e7eb;background:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#374151;flex-shrink:0;">+</button>
+                        </form>
+                    </div>
 
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                    onclick="changeQty(this, -1)">−</button>
+                    <!-- Subtotal -->
+                    <div style="width:110px;text-align:right;font-weight:700;color:#dc2626;font-size:14.5px;">
+                        <?= number_format($item['price'] * $item['quantity']) ?>đ
+                    </div>
 
-                                <input type="number" name="quantity"
-                                    value="<?= (int)$item['quantity'] ?>"
-                                    min="1" max="999"
-                                    class="form-control form-control-sm text-center"
-                                    style="width:55px;"
-                                    onchange="this.form.submit()">
-
-                                <button type="button" class="btn btn-outline-secondary btn-sm"
-                                    onclick="changeQty(this, 1)">+</button>
-                            </form>
-                        </td>
-
-                        <!-- Đơn giá -->
-                        <td class="text-end text-muted">
-                            <?= number_format($item['price'], 0, ',', '.') ?>đ
-                        </td>
-
-                        <!-- Thành tiền -->
-                        <td class="text-end fw-bold text-danger">
-                            <?= number_format($item['price'] * $item['quantity'], 0, ',', '.') ?>đ
-                        </td>
-
-                        <!-- Nút xoá -->
-                        <td class="text-center">
-                            <a href="<?= BASE_URL ?>?action=cart-remove&id=<?= $id ?>"
-                                class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('Xoá sản phẩm này khỏi giỏ hàng?')"
-                                title="Xoá">
-                                🗑
-                            </a>
-                        </td>
-                    </tr>
+                    <!-- Remove -->
+                    <div style="width:44px;text-align:center;">
+                        <a href="<?= BASE_URL ?>?action=cart-remove&id=<?= $id ?>"
+                           onclick="return confirm('Xóa sản phẩm này?')"
+                           style="width:30px;height:30px;border-radius:8px;background:#fef2f2;border:1px solid #fee2e2;color:#ef4444;display:inline-flex;align-items:center;justify-content:center;font-size:13px;text-decoration:none;transition:all .18s;"
+                           title="Xóa"><i class="fas fa-trash-can"></i></a>
+                    </div>
+                </div>
                 <?php endforeach; ?>
-            </tbody>
-        </table>
 
-        <!-- Nút bên dưới bảng -->
-        <div class="d-flex justify-content-between mt-2">
-            <a href="<?= BASE_URL ?>" class="btn btn-outline-secondary">
-                ← Tiếp tục mua sắm
-            </a>
-            <a href="<?= BASE_URL ?>?action=cart-clear"
-                class="btn btn-outline-danger"
-                onclick="return confirm('Xoá toàn bộ giỏ hàng?')">
-                🗑 Xoá tất cả
-            </a>
-        </div>
-    </div>
-
-    <!-- Tóm tắt đơn hàng -->
-    <div class="col-lg-4">
-        <div class="card">
-            <div class="card-header bg-dark text-white">
-                <h5 class="mb-0">Tóm tắt đơn hàng</h5>
-            </div>
-            <div class="card-body">
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Số lượng sản phẩm:</span>
-                    <span><?= array_sum(array_column($cart, 'quantity')) ?></span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Tạm tính:</span>
-                    <span><?= number_format($total, 0, ',', '.') ?>đ</span>
-                </div>
-                <div class="d-flex justify-content-between mb-2">
-                    <span class="text-muted">Phí vận chuyển:</span>
-                    <span class="text-success fw-semibold">Miễn phí</span>
-                </div>
-                <hr>
-                <div class="d-flex justify-content-between fw-bold fs-5">
-                    <span>Tổng cộng:</span>
-                    <span class="text-danger"><?= number_format($total, 0, ',', '.') ?>đ</span>
-                </div>
-
-                <?php if (isset($_SESSION['user_id'])) : ?>
-                    <a href="<?= BASE_URL ?>?action=order-create"
-                        class="btn btn-primary w-100 mt-3">
-                        Đặt hàng ngay →
+                <div style="padding:12px 20px;display:flex;justify-content:space-between;background:#fafafa;">
+                    <a href="<?= BASE_URL ?>" class="btn btn-sm btn-light rounded-pill">
+                        <i class="fas fa-arrow-left me-1"></i>Tiếp tục mua sắm
                     </a>
-                <?php else : ?>
+                    <a href="<?= BASE_URL ?>?action=cart-clear"
+                       onclick="return confirm('Xóa toàn bộ giỏ hàng?')"
+                       class="btn btn-sm" style="background:#fef2f2;color:#ef4444;border:1px solid #fee2e2;border-radius:20px;">
+                        <i class="fas fa-trash me-1"></i>Xóa tất cả
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div style="background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:22px;position:sticky;top:80px;">
+                <h6 style="font-weight:700;margin-bottom:16px;font-size:15px;">Tóm tắt đơn hàng</h6>
+
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13.5px;">
+                    <span style="color:#6b7280;">Số lượng</span>
+                    <span style="font-weight:600;"><?= array_sum(array_column($cart,'quantity')) ?> sản phẩm</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:13.5px;">
+                    <span style="color:#6b7280;">Tạm tính</span>
+                    <span style="font-weight:600;"><?= number_format($total) ?>đ</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;margin-bottom:14px;font-size:13.5px;">
+                    <span style="color:#6b7280;">Phí vận chuyển</span>
+                    <span style="font-weight:600;color:#16a34a;">Miễn phí</span>
+                </div>
+                <div style="border-top:1px solid #e5e7eb;padding-top:14px;display:flex;justify-content:space-between;margin-bottom:18px;">
+                    <span style="font-weight:700;font-size:15px;">Tổng cộng</span>
+                    <span style="font-weight:800;font-size:18px;color:#dc2626;"><?= number_format($total) ?>đ</span>
+                </div>
+
+                <?php if(isset($_SESSION['user_id'])): ?>
+                    <a href="<?= BASE_URL ?>?action=order-create-cart"
+                       style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#16a34a;color:#fff;border-radius:11px;font-weight:700;font-size:14px;text-decoration:none;transition:all .18s;">
+                        <i class="fas fa-credit-card"></i> Đặt hàng ngay
+                    </a>
+                <?php else: ?>
                     <a href="<?= BASE_URL ?>?action=login"
-                        class="btn btn-warning w-100 mt-3">
-                        Đăng nhập để đặt hàng
+                       style="display:flex;align-items:center;justify-content:center;gap:8px;padding:13px;background:#f59e0b;color:#fff;border-radius:11px;font-weight:700;font-size:14px;text-decoration:none;">
+                        <i class="fas fa-sign-in-alt"></i> Đăng nhập để đặt hàng
                     </a>
                 <?php endif; ?>
+
+                <div style="margin-top:14px;padding:10px;background:#f0fdf4;border-radius:9px;font-size:12px;color:#15803d;text-align:center;">
+                    <i class="fas fa-shield-halved me-1"></i>Thanh toán bảo mật 100%
+                </div>
             </div>
         </div>
     </div>
-
-<?php endif; ?>
+    <?php endif; ?>
+</div>
 
 <script>
-    function changeQty(btn, delta) {
-        const form = btn.closest('form');
-        const input = form.querySelector('input[name="quantity"]');
-        const val = Math.max(1, parseInt(input.value) + delta);
-        input.value = val;
-        form.submit();
-    }
+function changeQty(btn, delta) {
+    const form = btn.closest('form');
+    const input = form.querySelector('input[name="quantity"]');
+    const val = Math.max(1, parseInt(input.value) + delta);
+    input.value = val;
+    form.submit();
+}
 </script>

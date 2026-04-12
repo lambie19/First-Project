@@ -36,6 +36,29 @@ class ClientOrderController
         require_once PATH_VIEW_MAIN_CLIENT;
     }
 
+    // GET ?action=order-create (không cần &id)
+public function createFromCart() {
+    if (!isset($_SESSION['user_id'])) {
+        header('Location: ' . BASE_URL . '?action=login');
+        exit;
+    }
+
+    if (empty($_SESSION['cart'])) {
+        header('Location: ' . BASE_URL . '?action=cart');
+        exit;
+    }
+
+    $cart  = $_SESSION['cart'];
+    $total = 0;
+    foreach ($cart as $item) {
+        $total += $item['price'] * $item['quantity'];
+    }
+
+    $view  = 'order/create-from-cart'; // view mới cho đặt hàng từ giỏ
+    $title = 'Đặt hàng';
+    require_once PATH_VIEW_MAIN_CLIENT;
+}
+
     // Xử lý lưu đơn hàng (POST)
     public function store() {
         if (!isset($_SESSION['user_id'])) {

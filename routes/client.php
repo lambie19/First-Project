@@ -24,10 +24,11 @@ match ($action) {
     'order-store'       => (new ClientOrderController)->store(),
     'order-success'     => (new ClientOrderController)->success(),
 
-    // ── Giỏ hàng ──────────────────────────────────────────────────────
+    // ── Giỏ hàng 
     'cart'              => (new CartController)->index(),   // Xem giỏ hàng
     'cart-add'          => (new CartController)->add(),     // Thêm sản phẩm
     'cart-update'       => (new CartController)->update(),  // Cập nhật số lượng
     'cart-remove'       => (new CartController)->remove(),  // Xoá 1 sản phẩm
     'cart-clear'        => (new CartController)->clear(),   // Xoá tất cả
+    'order-create-cart' => (new ClientOrderController)->createFromCart(),
 };
