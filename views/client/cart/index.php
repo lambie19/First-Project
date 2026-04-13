@@ -10,7 +10,7 @@
     <?php endif; ?>
 
     <?php if(isset($_SESSION['error'])): ?>
-        <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($_SESSION['error']) ?></div>
+        <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['error'] ?></div>
         <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 

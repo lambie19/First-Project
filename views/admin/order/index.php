@@ -1,10 +1,10 @@
 <?php
 $statusMap = [
-    'pending'   => ['label'=>'Chờ xác nhận','class'=>'bg-warning-subtle text-warning','dot'=>'#f59e0b'],
-    'confirmed' => ['label'=>'Đã xác nhận','class'=>'bg-info-subtle text-info','dot'=>'#06b6d4'],
-    'shipping'  => ['label'=>'Đang giao','class'=>'','style'=>'background:#eff6ff;color:#3b82f6;','dot'=>'#3b82f6'],
-    'completed' => ['label'=>'Hoàn thành','class'=>'bg-success-subtle text-success','dot'=>'#10b981'],
-    'cancelled' => ['label'=>'Đã hủy','class'=>'bg-danger-subtle text-danger','dot'=>'#ef4444'],
+    'pending'   => ['label'=>'Chờ xác nhận','cls'=>'bg-warning-subtle text-warning','dot'=>'#f59e0b'],
+    'confirmed' => ['label'=>'Đã xác nhận','cls'=>'bg-info-subtle text-info','dot'=>'#06b6d4'],
+    'shipping'  => ['label'=>'Đang giao','cls'=>'','style'=>'background:#eff6ff;color:#3b82f6;','dot'=>'#3b82f6'],
+    'completed' => ['label'=>'Hoàn thành','cls'=>'bg-success-subtle text-success','dot'=>'#10b981'],
+    'cancelled' => ['label'=>'Đã hủy','cls'=>'bg-danger-subtle text-danger','dot'=>'#ef4444'],
 ];
 $counts = ['pending'=>0,'confirmed'=>0,'shipping'=>0,'completed'=>0,'cancelled'=>0];
 $total_revenue = 0;
@@ -13,6 +13,10 @@ foreach($data as $o){
     if($o['status']==='completed') $total_revenue += $o['total_price'];
 }
 ?>
+
+<?php if(isset($_SESSION['error'])): ?>
+<div class="alert alert-danger mb-3"><i class="fas fa-circle-exclamation me-2"></i><?= $_SESSION['error'] ?></div>
+<?php unset($_SESSION['error']); endif; ?>
 
 <!-- Stat Cards -->
 <div class="row g-3 mb-4">
@@ -59,14 +63,13 @@ foreach($data as $o){
     <div class="col-6 col-md-2">
         <div class="card border-0" style="background:linear-gradient(135deg,#6366f1,#8b5cf6);">
             <div class="card-body py-3 text-center">
-                <div class="fw-bold text-white" style="font-size:14px;"><?= number_format($total_revenue) ?>đ</div>
+                <div class="fw-bold text-white" style="font-size:13px;"><?= number_format($total_revenue) ?>đ</div>
                 <div class="text-white opacity-75" style="font-size:12px;">Doanh thu</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Orders Table -->
 <?php if(empty($data)): ?>
 <div class="card">
     <div class="card-body text-center py-5 text-muted">
@@ -92,7 +95,7 @@ foreach($data as $o){
             </thead>
             <tbody>
                 <?php foreach($data as $order):
-                    $st = $statusMap[$order['status']] ?? ['label'=>$order['status'],'class'=>'bg-secondary','dot'=>'#6b7280'];
+                    $st = $statusMap[$order['status']] ?? ['label'=>$order['status'],'cls'=>'bg-secondary','dot'=>'#6b7280'];
                 ?>
                 <tr>
                     <td><strong style="color:#6366f1;">#<?= $order['id'] ?></strong></td>
@@ -101,17 +104,28 @@ foreach($data as $o){
                     <td class="fw-bold text-danger"><?= number_format($order['total_price']) ?>đ</td>
                     <td><span class="badge bg-secondary-subtle text-secondary"><?= $order['total_items'] ?> SP</span></td>
                     <td>
-                        <span class="badge <?= $st['class'] ?>" <?= isset($st['style'])?"style=\"{$st['style']}\"":'' ?>>
+                        <span class="badge <?= $st['cls'] ?>" <?= isset($st['style'])?"style=\"{$st['style']}\"":'' ?>>
                             <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:<?= $st['dot'] ?>;margin-right:4px;vertical-align:middle;"></span>
                             <?= $st['label'] ?>
                         </span>
                     </td>
                     <td class="text-muted" style="font-size:12.5px;"><?= date('d/m/Y H:i', strtotime($order['created_at'])) ?></td>
                     <td class="text-center">
-                        <a href="<?= BASE_URL_ADMIN ?>&action=show-order&id=<?= $order['id'] ?>" class="btn btn-sm" style="background:#eff6ff;color:#3b82f6;border:1px solid #dbeafe;"><i class="fas fa-eye me-1"></i>Chi tiết</a>
-                        <a href="<?= BASE_URL_ADMIN ?>&action=delete-order&id=<?= $order['id'] ?>"
-                           onclick="return confirm('Xóa đơn hàng #<?= $order['id'] ?>?')"
-                           class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                        <a href="<?= BASE_URL_ADMIN ?>&action=show-order&id=<?= $order['id'] ?>"
+                           class="btn btn-sm" style="background:#eff6ff;color:#3b82f6;border:1px solid #dbeafe;">
+                            <i class="fas fa-eye me-1"></i>Chi tiết
+                        </a>
+                        <?php if($order['status'] === 'pending'): ?>
+                            <form method="POST"
+                                  action="<?= BASE_URL_ADMIN ?>&action=update-order-status&id=<?= $order['id'] ?>"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Hủy đơn hàng #<?= $order["id"] ?>?')"
+                                <input type="hidden" name="status" value="cancelled">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-ban me-1"></i>Hủy đơn
+                                </button>
+                            </form>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -119,4 +133,5 @@ foreach($data as $o){
         </table>
     </div>
 </div>
+
 <?php endif; ?>

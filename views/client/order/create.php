@@ -6,7 +6,7 @@
     </div>
 
     <?php if(isset($error)): ?>
-    <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?= htmlspecialchars($error) ?></div>
+    <div class="alert alert-danger"><i class="fas fa-exclamation-circle me-2"></i><?= $error ?></div>
     <?php endif; ?>
 
     <div class="row g-4">

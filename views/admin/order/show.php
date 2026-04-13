@@ -8,15 +8,22 @@ $statusMap = [
 ];
 $st = $statusMap[$order['status']] ?? ['label'=>$order['status'],'cls'=>'bg-secondary','dot'=>'#6b7280'];
 $isLocked = in_array($order['status'], ['completed','cancelled']);
+
+// Dùng model để lấy danh sách trạng thái được phép chuyển tới
+$allowedStatuses = $allowedStatuses ?? Order::allowedNextStatuses($order['status']);
 ?>
 
 <div class="d-flex align-items-center gap-2 mb-3">
     <a href="<?= BASE_URL_ADMIN ?>&action=list-order" class="btn btn-light btn-sm"><i class="fas fa-arrow-left me-1"></i>Danh sách</a>
-    <span class="badge <?= $st['cls'] ?>" <?= isset($st['style'])?"style=\"{$st['style']}\"":'' ?> style="font-size:13px;padding:6px 14px;">
+    <span class="badge <?= $st['cls'] ?>" <?= isset($st['style'])?"style=\"{$st['style']}font-size:13px;padding:6px 14px;\"":"style=\"font-size:13px;padding:6px 14px;\"" ?>>
         <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:<?= $st['dot'] ?>;margin-right:6px;vertical-align:middle;"></span>
         <?= $st['label'] ?>
     </span>
 </div>
+
+<?php if(isset($_SESSION['error'])): ?>
+<div class="alert alert-danger mb-3"><i class="fas fa-exclamation-circle me-2"></i><?= $_SESSION['error'] ?></div>
+<?php unset($_SESSION['error']); endif; ?>
 
 <div class="row g-4">
     <!-- Order info + status update -->
@@ -35,7 +42,7 @@ $isLocked = in_array($order['status'], ['completed','cancelled']);
                     ['Ngày đặt', date('H:i - d/m/Y', strtotime($order['created_at'])), 'text-muted'],
                     ['Tổng tiền', number_format($order['total_price']).'đ', 'text-danger fw-bold fs-6'],
                 ];
-                if (!empty($order['note'])) $rows[] = ['Ghi chú', htmlspecialchars($order['note']), 'fst-italic text-muted'];
+                if(!empty($order['note'])) $rows[] = ['Ghi chú', htmlspecialchars($order['note']), 'fst-italic text-muted'];
                 foreach($rows as [$label, $val, $cls]):
                 ?>
                 <div style="display:flex;padding:12px 18px;border-bottom:1px solid #f1f5f9;font-size:13.5px;gap:12px;">
@@ -51,19 +58,31 @@ $isLocked = in_array($order['status'], ['completed','cancelled']);
             <div class="card-header"><i class="fas fa-arrows-rotate me-2 text-warning"></i>Cập nhật trạng thái</div>
             <div class="card-body">
                 <?php if($isLocked): ?>
-                <div class="alert mb-0 <?= $order['status']==='completed'?'alert-success':'alert-danger' ?>" style="border-radius:10px;">
+                <div class="alert mb-0 <?= $order['status']==='completed'?'alert-success':'alert-danger' ?>" style="border-radius:10px;font-size:13.5px;">
                     <i class="fas fa-lock me-2"></i>
-                    <strong><?= $order['status']==='completed'?'Đơn hoàn thành':'Đơn đã hủy' ?></strong> — không thể thay đổi trạng thái.
+                    <strong><?= $order['status']==='completed'?'Đơn đã hoàn thành':'Đơn đã hủy' ?></strong>
+                    — Trạng thái bị khóa, không thể thay đổi.
                 </div>
+
+                <?php elseif(empty($allowedStatuses)): ?>
+                <div class="alert alert-secondary mb-0" style="border-radius:10px;font-size:13.5px;">
+                    Không có trạng thái tiếp theo khả dụng.
+                </div>
+
                 <?php else: ?>
+                <div style="font-size:12.5px;color:#6b7280;margin-bottom:10px;">
+                    <i class="fas fa-info-circle me-1"></i>
+                    Chỉ có thể chuyển sang trạng thái tiếp theo, không thể quay lại.
+                </div>
                 <form id="statusForm" action="<?= BASE_URL_ADMIN ?>&action=update-order-status&id=<?= $order['id'] ?>" method="POST">
-                    <label class="form-label">Trạng thái mới</label>
+                    <label class="form-label">Chuyển sang</label>
                     <select name="status" id="statusSelect" class="form-select mb-3">
-                        <?php foreach($statusMap as $key=>$val): ?>
-                        <option value="<?= $key ?>" <?= $order['status']===$key?'selected':'' ?>><?= $val['label'] ?></option>
+                        <option value="">-- Chọn trạng thái --</option>
+                        <?php foreach($allowedStatuses as $key): ?>
+                        <option value="<?= $key ?>"><?= $statusMap[$key]['label'] ?? $key ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <button type="button" onclick="confirmUpdate()" class="btn btn-warning w-100">
+                    <button type="button" onclick="confirmUpdate()" class="btn btn-warning w-100 fw-bold">
                         <i class="fas fa-save me-1"></i>Cập nhật trạng thái
                     </button>
                 </form>
@@ -91,7 +110,9 @@ $isLocked = in_array($order['status'], ['completed','cancelled']);
                         <?php endforeach; ?>
                     </div>
                     <?php if($order['status']==='cancelled'): ?>
-                    <div class="alert alert-danger mt-3 mb-0 py-2 text-center" style="font-size:13px;border-radius:9px;">Đơn hàng đã bị hủy</div>
+                    <div class="alert alert-danger mt-3 mb-0 py-2 text-center" style="font-size:13px;border-radius:9px;">
+                        <i class="fas fa-times-circle me-1"></i>Đơn hàng đã bị hủy
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
@@ -140,11 +161,18 @@ $isLocked = in_array($order['status'], ['completed','cancelled']);
             </div>
         </div>
 
+        <?php if($order['status'] === 'pending'): ?>
         <div class="mt-3">
-            <a href="<?= BASE_URL_ADMIN ?>&action=delete-order&id=<?= $order['id'] ?>"
-               onclick="return confirm('Xóa đơn hàng #<?= $order['id'] ?>? Không thể hoàn tác!')"
-               class="btn btn-sm btn-outline-danger"><i class="fas fa-trash me-1"></i>Xóa đơn hàng này</a>
+            <form method="POST"
+                  action="<?= BASE_URL_ADMIN ?>&action=update-order-status&id=<?= $order['id'] ?>"
+                  onsubmit="return confirm('Hủy đơn hàng #' + <?= $order['id'] ?> + '? Kho hàng sẽ được hoàn trả.')">
+                <input type="hidden" name="status" value="cancelled">
+                <button type="submit" class="btn btn-sm btn-outline-danger">
+                    <i class="fas fa-ban me-1"></i>Hủy đơn hàng này
+                </button>
+            </form>
         </div>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -169,12 +197,14 @@ $isLocked = in_array($order['status'], ['completed','cancelled']);
 <script>
 const statusLabels = {pending:'Chờ xác nhận',confirmed:'Đã xác nhận',shipping:'Đang giao',completed:'Hoàn thành',cancelled:'Đã hủy'};
 function confirmUpdate(){
-    const val = document.getElementById('statusSelect').value;
-    const label = statusLabels[val]??val;
-    const isFinal = ['completed','cancelled'].includes(val);
-    document.getElementById('modalBody').innerHTML = `Chuyển sang trạng thái <strong>"${label}"</strong>?`
-        + (isFinal?`<br><span class="text-danger" style="font-size:12.5px;">⚠️ Đơn sẽ bị khóa sau khi thay đổi.</span>`:'');
-    document.getElementById('confirmBtn').className = isFinal?'btn btn-danger btn-sm fw-bold':'btn btn-warning btn-sm fw-bold';
+    const sel = document.getElementById('statusSelect');
+    if(!sel.value) { alert('Vui lòng chọn trạng thái!'); return; }
+    const label = statusLabels[sel.value] ?? sel.value;
+    const isFinal = ['completed','cancelled'].includes(sel.value);
+    document.getElementById('modalBody').innerHTML =
+        `Chuyển sang <strong>"${label}"</strong>?`
+        + (isFinal ? `<br><span class="text-danger" style="font-size:12px;">⚠️ Không thể hoàn tác sau khi xác nhận.</span>` : '');
+    document.getElementById('confirmBtn').className = isFinal ? 'btn btn-danger btn-sm fw-bold' : 'btn btn-warning btn-sm fw-bold';
     new bootstrap.Modal(document.getElementById('confirmModal')).show();
 }
 </script>

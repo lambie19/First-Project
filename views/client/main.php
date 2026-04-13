@@ -333,6 +333,9 @@
                     <div class="user-avatar"><?= strtoupper(substr($_SESSION['user_name']??'U',0,1)) ?></div>
                     <?= htmlspecialchars($_SESSION['user_name']) ?>
                 </div>
+                <a href="<?= BASE_URL ?>?action=order-history" class="hdr-btn hdr-btn-outline" title="Lịch sử đơn hàng">
+                    <i class="fas fa-clock-rotate-left"></i> Đơn hàng
+                </a>
                 <a href="<?= BASE_URL ?>?action=cart" class="hdr-btn hdr-btn-outline cart-btn" style="position:relative;">
                     <i class="fas fa-shopping-basket"></i> Giỏ hàng
                     <?php if(!empty($_SESSION['cart'])): ?>

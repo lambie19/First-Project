@@ -28,6 +28,13 @@ class Category extends BaseModel {
         $stmt->execute([$name, $id]);
     }
 
+    // Thay delete = toggleStatus
+    public function toggleStatus($id) {
+        $sql = "UPDATE categories SET status = IF(IFNULL(status,1) = 1, 0, 1) WHERE id = ?";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([$id]);
+    }
+
     public function delete($id) {
         $sql = "DELETE FROM categories WHERE id = ?";
         $stmt = $this->pdo->prepare($sql);

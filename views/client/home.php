@@ -217,7 +217,7 @@
     <div class="row g-3 mb-3">
         <div class="col-md-4">
             <div class="news-card">
-                <img src="https://cms.piklab.vn/resources/Tai%20nguyen%20Piklab/File%20design%20TMDT/piklab1800.jpg" alt="">
+                <img src="../assets/uploads/tra_dao2.jpg" alt="">
                 <div class="news-card-body">
                     <div class="news-date"><i class="fas fa-calendar me-1"></i>17/12/2025</div>
                     <a href="#" class="news-title">Mùa hè rực rỡ - Giảm giá 50%</a>
@@ -227,7 +227,7 @@
         </div>
         <div class="col-md-4">
             <div class="news-card">
-                <img src="https://cdn2.fptshop.com.vn/unsafe/Uploads/images/tin-tuc/178058/Originals/poster-tra-sua-7.jpg" alt="">
+                <img src="../assets/uploads/hong_ts.jpg" alt="">
                 <div class="news-card-body">
                     <div class="news-date"><i class="fas fa-calendar me-1"></i>16/12/2025</div>
                     <a href="#" class="news-title">Ra mắt BST nhài sữa Lục Vân</a>
