@@ -1,6 +1,6 @@
 <?php
 
-define('BASE_URL',          'http://03_t4_web2041.03_web2041-main.test/');
+define('BASE_URL', 'http://localhost/your-project/');
 define('BASE_URL_ADMIN',          'http://03_t4_web2041.03_web2041-main.test/?mode=admin');
 
 define('PATH_ROOT',         __DIR__ . '/../');
@@ -25,7 +25,7 @@ define('DB_HOST',     'localhost');
 define('DB_PORT',     '3306');
 define('DB_USERNAME', 'root');
 define('DB_PASSWORD', '');
-define('DB_NAME',     'hoangddph63542_web2041.03');
+define('DB_NAME', 'your_database');
 define('DB_OPTIONS', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,

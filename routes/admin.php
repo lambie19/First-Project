@@ -4,35 +4,37 @@ $action = $_GET['action'] ?? '/';
 match ($action) {
     '/'         => (new ProductController)->home(),
 
-    // CRUD Product — không có delete, thay bằng toggle-status
-    'list-product'        => (new ProductController)->index(),
-    'show-product'        => (new ProductController)->show(),
-    'create-product'      => (new ProductController)->create(),
-    'store-product'       => (new ProductController)->store(),
-    'edit-product'        => (new ProductController)->edit(),
-    'update-product'      => (new ProductController)->update(),
-    'toggle-product'      => (new ProductController)->toggleStatus(),   // ← disable/enable
+    // THỐNG KÊ
+    'statistic' => (new StatisticController)->index(),
 
-    // DANH MỤC — không có delete, thay bằng toggle-status
-    'list-category'       => (new CategoryController)->index(),
-    'create-category'     => (new CategoryController)->create(),
-    'store-category'      => (new CategoryController)->store(),
-    'edit-category'       => (new CategoryController)->edit(),
-    'update-category'     => (new CategoryController)->update(),
-    'toggle-category'     => (new CategoryController)->toggleStatus(),  // ← disable/enable
+    // CRUD Product
+    'list-product'    => (new ProductController)->index(),
+    'delete-product'  => (new ProductController)->delete(),
+    'show-product'    => (new ProductController)->show(),
+    'create-product'  => (new ProductController)->create(),
+    'store-product'   => (new ProductController)->store(),
+    'edit-product'    => (new ProductController)->edit(),
+    'update-product'  => (new ProductController)->update(),
 
-    // NGƯỜI DÙNG — chỉ xem + khóa/mở, không edit
-    'list-user'           => (new UserController)->index(),
-    'show-user'           => (new UserController)->show(),              // ← xem chi tiết
-    'lock-user'           => (new UserController)->lock(),
-    'unlock-user'         => (new UserController)->unlock(),
+    // DANH MỤC
+    'list-category'   => (new CategoryController)->index(),
+    'create-category' => (new CategoryController)->create(),
+    'store-category'  => (new CategoryController)->store(),
+    'edit-category'   => (new CategoryController)->edit(),
+    'update-category' => (new CategoryController)->update(),
+    'delete-category' => (new CategoryController)->delete(),
+
+    // NGƯỜI DÙNG
+    'list-user'   => (new UserController)->index(),
+    'edit-user'   => (new UserController)->edit(),
+    'update-user' => (new UserController)->update(),
+    'lock-user'   => (new UserController)->lock(),
+    'unlock-user' => (new UserController)->unlock(),
 
     // BÌNH LUẬN
-    'list-comment'        => (new CommentController)->index(),
-    'update-comment'      => (new CommentController)->updateStatus(),
-    'delete-comment'      => (new CommentController)->destroy(),
+    'list-comment' => (new CommentController)->index(),
 
-    // ĐƠN HÀNG — không xóa được nếu đã hoàn thành
+    // ĐƠN HÀNG
     'list-order'          => (new AdminOrderController)->index(),
     'show-order'          => (new AdminOrderController)->show(),
     'update-order-status' => (new AdminOrderController)->updateStatus(),
