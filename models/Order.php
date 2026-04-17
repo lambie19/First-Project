@@ -137,6 +137,21 @@ class Order extends BaseModel {
         $stmt->execute(['status' => $status, 'id' => $id]);
     }
 
+
+    // Đánh dấu đơn đang chờ thanh toán MoMo
+    public function setPaymentPending(int $id, string $method): void {
+        $sql = "UPDATE orders SET payment_method = :method, payment_status = 'pending' WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['method' => $method, 'id' => $id]);
+    }
+
+    // Cập nhật khi MoMo xác nhận thanh toán thành công
+    public function setPaymentSuccess(int $id, string $transId): void {
+        $sql = "UPDATE orders SET payment_status = 'paid', momo_trans_id = :trans_id, status = 'pending' WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute(['trans_id' => $transId, 'id' => $id]);
+    }
+
     // Xóa đơn hàng
     public function delete($id) {
         $stmt = $this->pdo->prepare("DELETE FROM order_items WHERE order_id = :id");

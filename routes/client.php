@@ -29,6 +29,11 @@ match ($action) {
     'order-detail'  => (new OrderHistoryController)->detail(),
     'order-cancel'  => (new OrderHistoryController)->cancel(),
 
+    // MoMo Payment
+    'momo-pay'    => (new MomoController)->pay(),
+    'momo-return' => (new MomoController)->returnUrl(),
+    'momo-notify' => (new MomoController)->notify(),
+
     // Giỏ hàng
     'cart'        => (new CartController)->index(),
     'cart-add'    => (new CartController)->add(),
